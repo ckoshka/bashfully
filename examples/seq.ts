@@ -12,7 +12,4 @@ const seq = Bash<SeqArgs>(`seq $first $last`)((n, args) =>
 );
 
 seq.map(s => s.run({ first: 0, last: 15, divideBy: 2 })).map(toArray).map(console.log)
-    .defaultF(() => implBashDefaults)
-	.run({
-
-	})
+	.run(implBashDefaults)
