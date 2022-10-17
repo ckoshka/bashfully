@@ -1,4 +1,3 @@
-import { Buffer } from "./deps.ts";
 
 export const rpc = async (cmd: string): Promise<RPCServer> => {
     const file = await Deno.makeTempFile();
@@ -17,9 +16,9 @@ export const rpc = async (cmd: string): Promise<RPCServer> => {
                 (async () => {
                     await proc.stdin.write(enc.encode(s));
                     await proc.stdin.write(enc.encode("\n"));
-                    const arr = new Buffer();
-                    await arr.readFrom(proc.stdout);
-                    resolve(dec.decode(arr.bytes()));
+                    const arr = new Uint8Array(10000000);
+                    await proc.stdout.read(arr);
+                    resolve(dec.decode(arr.slice(0, arr.findIndex(b => b === 0))));
                 })()
             })), queue[0]) : queue[0].then(() => {
                 queue.pop(); 
