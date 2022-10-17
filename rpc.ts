@@ -18,7 +18,7 @@ export const rpc = async (cmd: string): Promise<RPCServer> => {
                     await proc.stdin.write(enc.encode(s));
                     await proc.stdin.write(enc.encode("\n"));
                     const arr = new Buffer();
-                    arr.readFrom(proc.stdout);
+                    await arr.readFrom(proc.stdout);
                     resolve(dec.decode(arr.bytes()));
                 })()
             })), queue[0]) : queue[0].then(() => {
