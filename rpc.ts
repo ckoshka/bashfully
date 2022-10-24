@@ -1,11 +1,12 @@
 
-export const rpc = async (cmd: string): Promise<RPCServer> => {
+export const rpc = async (cmd: string, using: string | undefined | null = "bash"): Promise<RPCServer> => {
     const file = await Deno.makeTempFile();
     await Deno.writeTextFile(file, cmd);
     const remove = () => Deno.remove(file);
+    await Deno.run({cmd: ["chmod", "+x", file]}).status();
     Deno.addSignalListener("SIGTERM", remove);
 
-    const proc = Deno.run({cmd: ["bash", file], stdin: "piped", stdout: "piped"});
+    const proc = Deno.run({cmd: !using ? [file] : [using, file], stdin: "piped", stdout: "piped"});
     const [enc, dec] = [new TextEncoder(), new TextDecoder()];
 
     const queue: Promise<string>[] = [];
